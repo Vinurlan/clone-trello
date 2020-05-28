@@ -9,6 +9,11 @@ Vue.use(VueRouter)
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/table',
+    name: 'Table',
+    component: () => import('@/views/Table.vue')
   }
 ]
 

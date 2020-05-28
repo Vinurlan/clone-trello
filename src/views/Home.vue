@@ -2,7 +2,7 @@
   <div class="home">
     <div class="home__list">
       <div class="home__loader" v-if="!loading">
-        <CreateTable @create="addTable"/>
+        <CreateTable @create="addTable" @delete="deleteAllTable" />
         <TableCard 
           v-for="table of filterTables"
           :key="table.id"
@@ -10,7 +10,7 @@
         />
       </div>
       <div class="home__loader-empty" v-else>
-        <CreateTable  @create="addTable"/>
+        <CreateTable  @create="addTable"  @delete="deleteAllTable" />
         <h2>No Tables</h2>
       </div>
     </div>
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import CreateTable from '@/components/Home/CreateTable.vue'
 import TableCard from '@/components/Home/TableCard.vue'
 
@@ -30,31 +31,30 @@ export default {
     filterTables() {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return this.tableList.sort((a, b) => a.id > b.id ? 1 : -1)
+    },
+    loading() {
+      return !this.tableList.length
     }
   },
   data() {
     return {
       tableList: [],
-      loading: true
+      // loading: true
     }
   },
   methods: {
     async loadTables() {
 
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i)
+      Vue.iterationStorage(key => {
+        this.tableList.push(JSON.parse(localStorage.getItem(key)))
+      })
 
-        if (key.replace(/=\d+/, '') === 'table') {          
-          this.tableList.push(JSON.parse(localStorage.getItem(key)))
-        }
-      }
-
-      if (this.tableList.length) {
-        this.loading = false
-      }
     },
     addTable(data) {
       this.tableList.push(data)
+    },
+    deleteAllTable() {
+      this.tableList = []
     }
   },
   mounted() {

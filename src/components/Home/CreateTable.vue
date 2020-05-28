@@ -20,6 +20,8 @@ export default {
         deleteAll() {
             Vue.iterationStorage((key) => {
                 localStorage.removeItem(key)
+                this.$emit('delete')
+                this.$refs.countCreate.value = ''
             })
         },
         createMore() {
@@ -32,16 +34,13 @@ export default {
             this.$refs.cName.value = ''
             this.$refs.cDescription.value = ''
         },
-        createTable(more = false) {
+        async createTable(e, more = false) {
             if (!this.$refs.cName.value) return
 
             let id = -1
-            for (let i = 0; i < localStorage.length; i++) {
-                if (localStorage.key(i).replace(/=\d+/, '') === 'table') {
-                    id = Math.max(id, +localStorage.key(i).replace(/\D+?=/, ''))
-                    
-                }
-            }
+            Vue.iterationStorage((key) => {
+                id = Math.max(id, +key.replace(/\D+?=/, ''))
+            })
             
             const data = {
                 id: ++id,
@@ -49,13 +48,16 @@ export default {
                 desc: this.$refs.cDescription.value
             }
 
-            localStorage.setItem(`table=${data.id}`, JSON.stringify(data))
+            await localStorage.setItem(`table=${data.id}`, JSON.stringify(data))
             this.$emit('create', data)
-
-            if (!more) {
+            
+            if (!more) { // Need for multi create
                 this.$refs.cName.value = ''
                 this.$refs.cDescription.value = ''
             }
+
+            console.log(this.$router.options.routes);
+            
         }
     }
 }

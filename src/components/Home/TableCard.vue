@@ -2,7 +2,7 @@
     <div class="table-card">
         <h3>{{ table.name }}</h3>
         <p>{{ table.desc }}</p>
-        <button>Open</button>
+        <button @click="openTable">Open</button>
     </div>
 </template>
 
@@ -13,6 +13,11 @@ export default {
         table: {
             required: true,
             type: Object
+        }
+    },
+    methods: {
+        openTable() {
+            this.$router.push({path: 'table', query: {id: this.table.id}})
         }
     }
 }
