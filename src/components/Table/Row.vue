@@ -50,7 +50,7 @@ export default {
 
     &_dragging {
         width: 150px;
-        background: rgb(168, 168, 168);
+        opacity: 0.5;
     }
 
     &_last {

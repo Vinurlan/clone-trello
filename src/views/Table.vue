@@ -88,35 +88,52 @@ export default {
             this.setStorage()
         },
         toggleRowCompleted(indexRow, idCol) {
+            if (this.dragTarget) {
+                this.clearTargetData()
+                return
+            }
             console.log('click');
             
             this.tableData.column[idCol].rows[indexRow].completed = !this.tableData.column[idCol].rows[indexRow].completed
+            this.clearTargetData()
             this.setStorage()
         },
 
+        clearTargetData() {
+            this.dragTarget = null
+            this.startPosTarget = null
+            this.dragStartTargetCol = null
+        },
         dragUp(event) {
             event.preventDefault()
             console.log('dragStart');
             
             const target = event.currentTarget
+
+            const boxTarget = target.getBoundingClientRect()
             
             this.dragStartTargetCol = target.parentNode.parentNode
             this.dragTarget = target
             this.startPosTarget = {
-                x: event.clientX - (target.offsetLeft + target.parentNode.parentNode.offsetLeft),
-                y: event.clientY - (target.offsetTop + target.parentNode.parentNode.offsetTop)
+                x: event.clientX - boxTarget.left,
+                y: event.clientY - boxTarget.top
             }
             
-            target.style = `position: fixed; width: ${target.clientWidth}px`
+            target.style = `position: fixed; width: ${target.clientWidth}px; z-index: 2;`
             target.classList.add('row_dragging')
 
             target.addEventListener('mouseup', this.drop)
             this.$refs.table.addEventListener('mousemove', this.dragging)
         },
-        drop() {
+        drop(event) {
             const target = this.dragTarget
 
-            // if ()
+            const col = document.elementsFromPoint(event.clientX, event.clientY).find((el) => el.classList.contains('column'))
+
+            if (col) {
+                const rowsDiv = col.querySelector('.column__rows')
+                rowsDiv.append(target)
+            }
 
             target.style = 'position: relative'
             target.classList.remove('row_dragging')
@@ -125,15 +142,15 @@ export default {
             this.$refs.table.removeEventListener('mousemove', this.dragging)
         },
         dragging(event) {
+            
             const target = this.dragTarget
             
             target.style.top = event.clientY - this.startPosTarget.y + 'px'
             target.style.left = event.clientX - this.startPosTarget.x + 'px'
 
-            // if (event.target.parentNode.parentNode.classList.contains('column')) {
-            //     console.log(true);
-                
-            // }
+            if (event.target.classList.contains('column')) {
+                console.log(true)
+            }
 
             // console.log(this.dragStartTargetCol, colCurr);
                         

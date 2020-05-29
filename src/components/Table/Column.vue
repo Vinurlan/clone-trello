@@ -1,5 +1,5 @@
 <template>
-    <div class="column">
+    <div class="column" >
         <div class="column__info">
             <h2 class="column__name">{{ column.name }}</h2>
             <button class="column__btn-delete" @click="deleteColumn">X</button>
@@ -47,6 +47,9 @@ export default {
         dragUp(target, index) {
             this.$emit('drag-up', target, index)
             
+        },
+        enter() {
+            console.log(true)
         }
     }
 }
@@ -60,6 +63,8 @@ export default {
     border: 1px solid #000;
     margin-right: 30px;
     position: relative;
+    background: rgba(255, 255, 255, 0.5);
+
 
     &__btn-delete {
         position: absolute;
