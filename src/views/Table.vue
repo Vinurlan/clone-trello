@@ -11,6 +11,7 @@
                 @create-row="createRow"
                 @delete-row="deleteRow"
                 @drag-up="dragUp"
+                @row-completed="toggleRowCompleted"
                 
             />
             <CreateColumn @add-column="createColumn"/>
@@ -31,9 +32,9 @@ export default {
     data() {
         return {
             tableData: {},
-            dragContainer: null,
-            posContainer: null,
-            dragContainerCol: null
+            dragTarget: null,
+            startPosTarget: null,
+            dragStartTargetCol: null
         }
     },
     methods: {
@@ -49,6 +50,12 @@ export default {
             localStorage.setItem(
                 `table=${this.tableData.id}`, 
                 JSON.stringify(this.tableData))
+        },
+        resetIndex(idCol) {
+            this.tableData.column[idCol].rows = this.tableData.column[idCol].rows.map((k, i) => {
+                k.index = i
+                return k
+            })
         },
         createColumn(name) {
             let id = -1
@@ -77,46 +84,59 @@ export default {
         deleteRow(indexRow, idCol) {
             this.tableData.column[idCol].rows.splice(indexRow, 1)
 
+            this.resetIndex(idCol)
+            this.setStorage()
+        },
+        toggleRowCompleted(indexRow, idCol) {
+            console.log('click');
+            
+            this.tableData.column[idCol].rows[indexRow].completed = !this.tableData.column[idCol].rows[indexRow].completed
             this.setStorage()
         },
 
         dragUp(event) {
+            event.preventDefault()
+            console.log('dragStart');
+            
             const target = event.currentTarget
-            console.log(event.currentTarget);
             
-            target.addEventListener('mouseup', this.drop)
-            this.$refs.table.addEventListener('mousemove', this.dragging)
-            
-            this.dragContainerCol = target.parentNode.parentNode
-            this.dragContainer = target
-            this.posContainer = {
+            this.dragStartTargetCol = target.parentNode.parentNode
+            this.dragTarget = target
+            this.startPosTarget = {
                 x: event.clientX - (target.offsetLeft + target.parentNode.parentNode.offsetLeft),
                 y: event.clientY - (target.offsetTop + target.parentNode.parentNode.offsetTop)
             }
-            console.log(this.posContainer);
             
-
-            target.style = 'position: fixed'
-
+            target.style = `position: fixed; width: ${target.clientWidth}px`
             target.classList.add('row_dragging')
-        },
-        drop(event) {
-            event.target.classList.remove('row_dragging')
 
-            event.target.removeEventListener('mouseup', this.drop)
+            target.addEventListener('mouseup', this.drop)
+            this.$refs.table.addEventListener('mousemove', this.dragging)
+        },
+        drop() {
+            const target = this.dragTarget
+
+            // if ()
+
+            target.style = 'position: relative'
+            target.classList.remove('row_dragging')
+
+            target.removeEventListener('mouseup', this.drop)
             this.$refs.table.removeEventListener('mousemove', this.dragging)
         },
         dragging(event) {
-            const target = this.dragContainer
+            const target = this.dragTarget
             
-            target.style.top = event.clientY - this.posContainer.y + 'px'
-            target.style.left = event.clientX - this.posContainer.x + 'px'
+            target.style.top = event.clientY - this.startPosTarget.y + 'px'
+            target.style.left = event.clientX - this.startPosTarget.x + 'px'
 
-            // let colCurr = target.parentNode.parentNode
+            // if (event.target.parentNode.parentNode.classList.contains('column')) {
+            //     console.log(true);
+                
+            // }
 
-            // console.log(this.dragContainerCol, colCurr);
-            
-            
+            // console.log(this.dragStartTargetCol, colCurr);
+                        
         }
     },
     mounted() {

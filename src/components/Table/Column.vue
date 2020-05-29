@@ -16,6 +16,7 @@
                 :index="index"
                 @delete-row="$emit('delete-row', index, column.id)"
                 @drag-up="dragUp"
+                @row-completed="$emit('row-completed', index, column.id)"
             />
         </div>
     </div>

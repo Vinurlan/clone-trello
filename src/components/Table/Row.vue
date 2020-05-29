@@ -1,5 +1,5 @@
 <template>
-    <div class="row" @mousedown="dragUp">
+    <div ref="row" class="row" draggable @dragstart="dragUp" @click="toggleCompleted">
         <p class="row__name">{{ row.name }}</p>
         <button @click="$emit('delete-row')">x</button>
     </div>
@@ -9,12 +9,26 @@
 export default {
     name: 'Row',
     props: ['row', 'index'],
+    watch: {
+        'row.completed'() {
+            this.$refs.row.classList.toggle('row_completed')
+        }
+    },
     methods: {
+        init() {
+            if (this.row.completed) {
+                this.$refs.row.classList.add('row_completed')
+            }
+        },
         dragUp(e) {
             this.$emit('drag-up', e, this.index)
-            console.log(e.target);
-            
+        },
+        toggleCompleted() {
+            this.$emit('row-completed')
         }
+    },
+    mounted() {
+        this.init()
     }
 }
 </script>
@@ -35,7 +49,12 @@ export default {
     }
 
     &_dragging {
+        width: 150px;
         background: rgb(168, 168, 168);
+    }
+
+    &_last {
+        opacity: 0.2;
     }
 }
 
