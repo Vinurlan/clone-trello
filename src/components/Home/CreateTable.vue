@@ -1,6 +1,6 @@
 <template>
     <div class="create-table">
-        <input ref="cName" type="text" placeholder="Name" required>
+        <input ref="cName" type="text" placeholder="Name">
         <input ref="cDescription" type="text" placeholder="Description">
         <button @click="createTable">+</button>
 
@@ -45,7 +45,8 @@ export default {
             const data = {
                 id: ++id,
                 name: this.$refs.cName.value,
-                desc: this.$refs.cDescription.value
+                desc: this.$refs.cDescription.value,
+                column: []
             }
 
             await localStorage.setItem(`table=${data.id}`, JSON.stringify(data))
@@ -55,9 +56,6 @@ export default {
                 this.$refs.cName.value = ''
                 this.$refs.cDescription.value = ''
             }
-
-            console.log(this.$router.options.routes);
-            
         }
     }
 }
