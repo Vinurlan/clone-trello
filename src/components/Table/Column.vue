@@ -4,7 +4,7 @@
             <h2 class="column__name">{{ column.name }}</h2>
             <button class="column__btn-delete" @click="deleteColumn">X</button>
 
-            <input ref="cRowName" type="text" placeholder="Name row">
+            <input ref="cRowName" type="text" maxlength="40" placeholder="Name row">
             <button class="column__btn-create-row" @click="createRow" >+</button>
             <hr>
         </div>
@@ -16,7 +16,7 @@
                 :index="index"
                 @delete-row="$emit('delete-row', index, column.id)"
                 @drag-up="dragUp"
-                @row-completed="$emit('row-completed', index, column.id)"
+                @row-completed="toggleCompleted"
             />
         </div>
     </div>
@@ -43,9 +43,12 @@ export default {
             this.$emit('create-row', {idCol: this.column.id, name: this.$refs.cRowName.value})
             this.$refs.cRowName.value = ''
         },
+        toggleCompleted(e, indexRow) {      
+            this.$emit('row-completed', e, indexRow, this.column.id)
+        },
 
         dragUp(target, index) {
-            this.$emit('drag-up', target, index)
+            this.$emit('drag-up', target, index, this.column.id)
             
         },
         enter() {

@@ -32,9 +32,10 @@ export default {
     data() {
         return {
             tableData: {},
+            startColId: null,
+            dragTargetData: null,
             dragTarget: null,
-            startPosTarget: null,
-            dragStartTargetCol: null
+            startPosTarget: null
         }
     },
     methods: {
@@ -51,11 +52,16 @@ export default {
                 `table=${this.tableData.id}`, 
                 JSON.stringify(this.tableData))
         },
-        resetIndex(idCol) {
-            this.tableData.column[idCol].rows = this.tableData.column[idCol].rows.map((k, i) => {
-                k.index = i
-                return k
-            })
+        resetIndex() {
+            for (let i = 0; i < arguments.length; i++) {
+                if (!(typeof arguments[i] == 'number')) continue
+
+                this.tableData.column[arguments[i]].rows = this.tableData.column[arguments[i]].rows.map((k, i) => {
+                    k.index = i
+                    return k
+                })
+            }
+            
         },
         createColumn(name) {
             let id = -1
@@ -87,11 +93,15 @@ export default {
             this.resetIndex(idCol)
             this.setStorage()
         },
-        toggleRowCompleted(indexRow, idCol) {
+        toggleRowCompleted(e, indexRow, idCol) {
             if (this.dragTarget) {
                 this.clearTargetData()
                 return
             }
+            if (e.target.tagName == "BUTTON") {
+                return
+            }
+
             console.log('click');
             
             this.tableData.column[idCol].rows[indexRow].completed = !this.tableData.column[idCol].rows[indexRow].completed
@@ -102,22 +112,23 @@ export default {
         clearTargetData() {
             this.dragTarget = null
             this.startPosTarget = null
-            this.dragStartTargetCol = null
+            this.dragTargetData = null
+            this.startColId = null
         },
-        dragUp(event) {
+        dragUp(event, indexRow, idCol) {
             event.preventDefault()
-            console.log('dragStart');
-            
+            console.log('dragStart');         
             const target = event.currentTarget
-
             const boxTarget = target.getBoundingClientRect()
             
-            this.dragStartTargetCol = target.parentNode.parentNode
+            this.startColId = idCol
+            this.dragTargetData = this.tableData.column[idCol].rows[indexRow]
             this.dragTarget = target
             this.startPosTarget = {
                 x: event.clientX - boxTarget.left,
                 y: event.clientY - boxTarget.top
             }
+
             
             target.style = `position: fixed; width: ${target.clientWidth}px; z-index: 2;`
             target.classList.add('row_dragging')
@@ -128,12 +139,22 @@ export default {
         drop(event) {
             const target = this.dragTarget
 
-            const col = document.elementsFromPoint(event.clientX, event.clientY).find((el) => el.classList.contains('column'))
+            const colEnd = document.elementsFromPoint(event.clientX, event.clientY).find((el) => el.classList.contains('column'))
 
-            if (col) {
-                const rowsDiv = col.querySelector('.column__rows')
-                rowsDiv.append(target)
+            if (colEnd) {
+                const colEndName = colEnd.querySelector('.column__name').innerHTML
+                const idEndCol = this.tableData.column.find(k => k.name == colEndName).id
+                
+                if (this.startColId !== idEndCol) {
+                    this.tableData.column[idEndCol].rows.push(this.dragTargetData)
+                    this.tableData.column[this.startColId].rows.splice(
+                        this.dragTargetData.index, 1)
+
+                    this.resetIndex(idEndCol, this.startColId)
+                    this.setStorage()
+                }
             }
+
 
             target.style = 'position: relative'
             target.classList.remove('row_dragging')
@@ -151,9 +172,6 @@ export default {
             if (event.target.classList.contains('column')) {
                 console.log(true)
             }
-
-            // console.log(this.dragStartTargetCol, colCurr);
-                        
         }
     },
     mounted() {

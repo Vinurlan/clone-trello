@@ -23,8 +23,8 @@ export default {
         dragUp(e) {
             this.$emit('drag-up', e, this.index)
         },
-        toggleCompleted() {
-            this.$emit('row-completed')
+        toggleCompleted(e) {
+            this.$emit('row-completed', e, this.index)
         }
     },
     mounted() {
@@ -43,6 +43,10 @@ export default {
     padding: 0 10px;
     margin: 5px auto;
     border: 1px solid #000;
+    
+    p {
+        overflow-wrap: anywhere;
+    }
 
     &_completed {
         background: rgb(189, 189, 189);
