@@ -2,10 +2,11 @@
     <div class="column" >
         <div class="column__info">
             <h2 class="column__name">{{ column.name }}</h2>
-            <button class="column__btn-delete" @click="deleteColumn">X</button>
-
-            <input ref="cRowName" type="text" maxlength="40" placeholder="Name row">
-            <button class="column__btn-create-row" @click="createRow" >+</button>
+            <button class="btn-delete column__btn-delete" @click="deleteColumn">&times;</button>
+            <div class="column__control">
+                <input class="inp column__name-row" ref="cRowName" type="text" maxlength="40" placeholder="Name row">
+                <button class="btn column__btn-create-row" @click="createRow" >+</button>
+            </div>
             <hr>
         </div>
         <div class="column__rows">
@@ -64,27 +65,47 @@ export default {
     min-width: 300px;
     min-height: 300px;
     border: 1px solid #000;
+    border-radius: 10px;
     margin-right: 30px;
     position: relative;
     background: rgba(255, 255, 255, 0.5);
-
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 
     &__btn-delete {
         position: absolute;
         top: 0;
         right: 0;
-        background: none;
-        border: none;
         margin: 10px;
-        transition: background .2s;
-
-        &:hover {
-            background: rgb(255, 198, 198);
-        }
+        font-size: 15pt;
     }
 
     &__rows {
+        width: 100%;
         padding: 5px;
+    }
+
+    &__control {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__name-row {
+        background: rgb(165, 201, 207);
+
+        &:focus {
+            background: #fff;
+        }
+    }
+
+    &__btn-create-row {
+        color: #000;
+        border: 1px solid #000;
+        margin-left: 5px;
+        font-size: 12pt;
     }
 }
 

@@ -7,6 +7,7 @@
           v-for="table of filterTables"
           :key="table.id"
           :table="table"
+          @delete-table="deleteTable"
         />
       </div>
       <div class="home__loader-empty" v-else>
@@ -29,8 +30,7 @@ export default {
   },
   computed: {
     filterTables() {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      return this.tableList.sort((a, b) => a.id > b.id ? 1 : -1)
+      return this.tableList.slice(0).sort((a, b) => a.id > b.id ? 1 : -1)
     },
     loading() {
       return !this.tableList.length
@@ -52,6 +52,12 @@ export default {
     addTable(data) {
       this.tableList.push(data)
     },
+    deleteTable(idTable) {
+      const index = this.tableList.findIndex(k => k.id === idTable)
+      this.tableList.splice(index, 1)
+
+      localStorage.removeItem(`table=${idTable}`)
+    },
     deleteAllTable() {
       this.tableList = []
     }
@@ -67,16 +73,10 @@ export default {
 
 .home {
   width: 100%;
-  height: 100%;
+  padding: 100px 0;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  &__list {
-    width: 80%;
-    height: 80%;
-    margin: 100px auto;
-  }
 
   &__loader, &__loader-empty {
     width: 100%;

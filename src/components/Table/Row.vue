@@ -1,7 +1,7 @@
 <template>
     <div ref="row" class="row" draggable @dragstart="dragUp" @click="toggleCompleted">
         <p class="row__name">{{ row.name }}</p>
-        <button @click="$emit('delete-row')">x</button>
+        <button class="btn-delete" @click="$emit('delete-row')">&times;</button>
     </div>
 </template>
 
@@ -43,6 +43,9 @@ export default {
     padding: 0 10px;
     margin: 5px auto;
     border: 1px solid #000;
+    border-radius: 5px;
+    background: rgb(225, 246, 255);
+    cursor: pointer;
     
     p {
         overflow-wrap: anywhere;
@@ -60,6 +63,7 @@ export default {
     &_last {
         opacity: 0.2;
     }
+
 }
 
 </style>

@@ -1,13 +1,13 @@
 <template>
     <div class="create-table">
-        <input ref="cName" type="text" placeholder="Name">
-        <input ref="cDescription" type="text" placeholder="Description">
-        <button @click="createTable">+</button>
-
+        <input class="inp" ref="cName" type="text" placeholder="Name">
+        <input class="inp" ref="cDescription" type="text" placeholder="Description">
+        <button class="btn create-table__btn-create" @click="createTable">+</button>
+<!-- 
         <input ref="countCreate" type="number" placeholder="Count">
         <button @click="createMore">Create More</button>
 
-        <button @click="deleteAll">Delete all</button>
+        <button @click="deleteAll">Delete all</button> -->
     </div>
 </template>
 
@@ -67,6 +67,18 @@ export default {
     width: 400px;
     height: 300px;
     border: 1px solid #000;
+    background: rgb(221, 255, 214);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border-radius: 10px;
+
+    &__btn-create {
+        color: #000;
+        border: 1px solid #000;
+
+    }
 }
 
 </style>

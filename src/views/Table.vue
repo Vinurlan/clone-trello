@@ -1,7 +1,7 @@
 <template>
     <div ref="table" class="table">
-        <h1>Table: {{tableData.name}}</h1>
-        <router-link to="/">Go Board</router-link>
+        <h1 class="table__name">{{tableData.name}}</h1>
+        <router-link to="/">&lArr; Go Board</router-link>
         <div class="table__list">
             <Column 
                 v-for="column of tableData.column"
@@ -102,8 +102,6 @@ export default {
                 return
             }
 
-            console.log('click');
-            
             this.tableData.column[idCol].rows[indexRow].completed = !this.tableData.column[idCol].rows[indexRow].completed
             this.clearTargetData()
             this.setStorage()
@@ -117,7 +115,7 @@ export default {
         },
         dragUp(event, indexRow, idCol) {
             event.preventDefault()
-            console.log('dragStart');         
+
             const target = event.currentTarget
             const boxTarget = target.getBoundingClientRect()
             
@@ -155,23 +153,17 @@ export default {
                 }
             }
 
-
             target.style = 'position: relative'
             target.classList.remove('row_dragging')
 
             target.removeEventListener('mouseup', this.drop)
             this.$refs.table.removeEventListener('mousemove', this.dragging)
         },
-        dragging(event) {
-            
+        dragging(event) {        
             const target = this.dragTarget
             
             target.style.top = event.clientY - this.startPosTarget.y + 'px'
             target.style.left = event.clientX - this.startPosTarget.x + 'px'
-
-            if (event.target.classList.contains('column')) {
-                console.log(true)
-            }
         }
     },
     mounted() {
@@ -191,12 +183,27 @@ export default {
     justify-content: flex-start;
     align-items: center;
 
+    &__name {
+        border: 3px solid #000;
+        border-radius: 10px;
+        padding: 5px 30px;
+    }
+
     &__list {
         width: 80%;
         margin: 100px;
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
+    }
+    
+    a {
+        text-decoration: none;
+        color: #000;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 
